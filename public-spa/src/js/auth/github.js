@@ -1,6 +1,7 @@
 (function() {
 
    var AuthProvider = require('./AuthProvider'),
+       config = require('../../../../client-config'),
        GitHub, github;
 
    GitHub = AuthProvider.extend({
@@ -13,9 +14,9 @@
          var params;
 
          params = {
-            client_id: 'TODO',
+            client_id: config.auth.github.clientID,
             // TODO: get this from config:
-            redirect_uri: 'http://localhost:8080?action=authCompletion&provider=github',
+            redirect_uri: this.getRedirectURL(),
             scope: 'user:email',
             state: state,
          };

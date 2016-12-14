@@ -1,6 +1,7 @@
 (function() {
 
    var AuthProvider = require('./AuthProvider'),
+       config = require('../../../../client-config'),
        Google, google;
 
    Google = AuthProvider.extend({
@@ -14,7 +15,7 @@
             var auth2;
 
             auth2 = gapi.auth2.init({
-               client_id: 'TODO',
+               client_id: config.auth.google.clientID,
                cookiepolicy: 'single_host_origin',
             });
 

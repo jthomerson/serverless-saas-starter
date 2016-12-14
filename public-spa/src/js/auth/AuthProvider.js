@@ -2,6 +2,7 @@
    'use strict';
 
    var Class = require('class.extend'),
+       config = require('../../../../client-config'),
        util = require('../util');;
 
    module.exports = Class.extend({
@@ -24,6 +25,10 @@
 
       findButtons: function() {
          return $('a[role=' + this._provider + '-signin]');
+      },
+
+      getRedirectURL: function() {
+         return config.auth.redirectBase + '?action=authCompletion&provider=' + this._provider;
       },
 
       handleButtonClick: function() {
