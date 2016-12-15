@@ -41,3 +41,12 @@ functions:
          - http:
             method: GET
             path: ping
+   socialAuth:
+      name: ${self:service}-${self:provider.stage}-socialAuth
+      handler: src/social-auth/SocialAuthentication.handler
+      memorySize: 512
+      timeout: 4
+      events:
+         - http:
+            method: POST
+            path: social-auth

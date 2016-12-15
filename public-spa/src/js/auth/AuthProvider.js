@@ -45,7 +45,16 @@
       },
 
       handleSuccess: function(state, accessToken) {
+         var params = { provider: this._provider, accessToken: accessToken, state: state },
+             url = config.auth.apiEndpoint + '/social-auth';
+
          console.log('login successful [%s], state: %s, access code:', this._provider, state, accessToken);
+         console.log('will post to', url, params);
+
+         $.ajax({ method: 'POST', url: url, data: JSON.stringify(params) })
+            .done(function(msg) {
+               console.log('done sending social auth to server, response social auth token:', msg);
+            });
       },
 
       _checkForAuthRedirect: function() {
