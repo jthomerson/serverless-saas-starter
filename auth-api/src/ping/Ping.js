@@ -2,8 +2,6 @@
 
 var Handler;
 
-require('dotenv').config({ silent: true });
-
 Handler = {
 
    handler: function(evt, context, cb) {

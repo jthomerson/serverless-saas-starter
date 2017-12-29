@@ -5,13 +5,6 @@ custom:
    defaultRegion: us-east-1
    region: ${opt:region, self:custom.defaultRegion}
    stage: ${opt:stage, env:USER}
-   writeEnvVars:
-      SERVERLESS_STAGE: ${self:custom.stage}
-      SERVERLESS_PROJECT: ${self:custom.projectName}
-      SERVERLESS_SERVICE_NAME: ${self:service}
-
-plugins:
-   - serverless-plugin-write-env-vars
 
 package:
    exclude:
@@ -23,6 +16,10 @@ provider:
    runtime: nodejs4.3
    region: ${self:custom.region}
    stage: ${self:custom.stage}
+   environment:
+      SERVERLESS_STAGE: ${self:custom.stage}
+      SERVERLESS_PROJECT: ${self:custom.projectName}
+      SERVERLESS_SERVICE_NAME: ${self:service}
    iamRoleStatements:
       - Effect: Allow
         Action:

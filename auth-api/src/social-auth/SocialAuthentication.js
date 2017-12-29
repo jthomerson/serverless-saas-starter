@@ -6,8 +6,6 @@ var Q = require('q'),
     providers = require('./providers/all'),
     Handler;
 
-require('dotenv').config({ silent: true });
-
 Handler = {
 
    handler: function(evt, context, cb) {
