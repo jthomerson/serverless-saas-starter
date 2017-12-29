@@ -12,7 +12,7 @@ module.exports = Class.extend({
       this._secret = config.clientSecret;
    },
 
-   authorizeUser: function(accessToken) {
+   authorizeLogin: function(accessToken) {
       // TODO: this is not the best way to do this
       // They recommend using google-auth-library so that the authentication
       // of the token can be done without an additional network request

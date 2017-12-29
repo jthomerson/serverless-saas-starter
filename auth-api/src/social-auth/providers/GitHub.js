@@ -13,7 +13,7 @@ module.exports = Class.extend({
       this._secret = config.clientSecret;
    },
 
-   authorizeUser: function(accessCode, state) {
+   authorizeLogin: function(accessCode, state) {
       var headers = { Accept: 'application/json', 'User-Agent': 'request-Lambda' },
           paramString, url;
 

@@ -1,11 +1,9 @@
 'use strict';
 
-var Google = require('./providers/Google'),
-    GitHub = require('./providers/GitHub'),
-    config = require('../server-config.js'),
-    google = new Google(config.auth.google),
-    github = new GitHub(config.auth.github),
-    providers = { google: google, github: github },
+var Q = require('q'),
+    AWS = require('aws-sdk'),
+    docs = new AWS.DynamoDB.DocumentClient(),
+    providers = require('./providers/all'),
     Handler;
 
 require('dotenv').config({ silent: true });
@@ -49,14 +47,21 @@ Handler = {
          });
       }
 
-      provider.authorizeUser(body.accessToken, body.state)
-         .then(function(user) {
-            var statusCode = (user ? 200 : 404),
+      provider.authorizeLogin(body.accessToken, body.state)
+         .then(function(loginInfo) {
+            if (!loginInfo) {
+               return null;
+            }
+
+            return Handler.findOrCreateLogin(loginInfo);
+         })
+         .then(function(dbLogin) {
+            var statusCode = (dbLogin ? 200 : 404),
                 body = { error: 'User not authenticated' };
 
-            if (user) {
+            if (dbLogin) {
                // TODO: return a social authorization object
-               body = user;
+               body = dbLogin;
             }
 
             cb(null, {
@@ -69,6 +74,39 @@ Handler = {
             // TODO: better error handling
             console.log('error authenticating user with third-party IdP', err, err.stack);
             cb(err);
+         });
+   },
+
+   findOrCreateLogin: function(loginProviderInfo) {
+      var key = loginProviderInfo.provider + ':' + loginProviderInfo.userID,
+          table = process.env.SERVERLESS_SERVICE_NAME + '-' + process.env.SERVERLESS_STAGE + '-Logins';
+
+      function createLogin() {
+         var params;
+
+         params = {
+            TableName: table,
+            Item: {
+               key: key,
+               provider: {
+                  type: loginProviderInfo.provider,
+                  details: loginProviderInfo,
+               },
+               // user: null,
+            }
+         };
+
+         return Q.ninvoke(docs, 'put', params)
+            .then(function(resp) {
+               console.log('put response', resp);
+               return params.Item;
+            });
+      }
+
+      return Q.ninvoke(docs, 'get', { TableName: table, Key: { key: key } })
+         .then(function(resp) {
+            console.log('from DB:', resp.Item);
+            return resp.Item ? resp.Item : createLogin();
          });
    },
 

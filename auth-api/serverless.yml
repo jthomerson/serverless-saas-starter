@@ -30,6 +30,19 @@ provider:
            - 'logs:CreateLogStream'
            - 'logs:PutLogEvents'
         Resource: 'arn:aws:logs:${self:custom.region}:*:*'
+      - Effect: Allow
+        Action:
+           - 'dynamodb:GetItem'
+           - 'dynamodb:PutItem'
+           - 'dynamodb:BatchGetItem'
+           - 'dynamodb:Query'
+        Resource: 'arn:aws:dynamodb:${self:custom.region}:*:table/${self:service}-${self:custom.stage}-*'
+      - Effect: Allow
+        Action:
+           - 'dynamodb:GetItem'
+           - 'dynamodb:BatchGetItem'
+           - 'dynamodb:Query'
+        Resource: 'arn:aws:dynamodb:${self:custom.region}:*:table/${self:service}-${self:custom.stage}-*/index/*'
 
 functions:
    ping:
@@ -50,3 +63,81 @@ functions:
          - http:
             method: POST
             path: social-auth
+
+resources:
+   Resources:
+      UsersTable:
+         Type: AWS::DynamoDB::Table
+         Properties:
+            TableName: ${self:service}-${self:custom.stage}-Users
+            AttributeDefinitions:
+               -
+                  AttributeName: id
+                  AttributeType: S
+               -
+                  AttributeName: emailAddress
+                  AttributeType: S
+            KeySchema:
+               -
+                  AttributeName: id
+                  KeyType: HASH
+            GlobalSecondaryIndexes:
+               -
+                  IndexName: emailAddress
+                  Projection:
+                     ProjectionType: KEYS_ONLY
+                  KeySchema:
+                     -
+                        AttributeName: emailAddress
+                        KeyType: HASH
+                  ProvisionedThroughput:
+                     ReadCapacityUnits: 1
+                     WriteCapacityUnits: 1
+            ProvisionedThroughput:
+               ReadCapacityUnits: 1
+               WriteCapacityUnits: 1
+      LoginsTable:
+         Type: AWS::DynamoDB::Table
+         Properties:
+            TableName: ${self:service}-${self:custom.stage}-Logins
+            AttributeDefinitions:
+               -
+                  AttributeName: key
+                  AttributeType: S
+               -
+                  AttributeName: userID
+                  AttributeType: S
+            KeySchema:
+               -
+                  AttributeName: key
+                  KeyType: HASH
+            GlobalSecondaryIndexes:
+               -
+                  IndexName: userID
+                  Projection:
+                     ProjectionType: KEYS_ONLY
+                  KeySchema:
+                     -
+                        AttributeName: userID
+                        KeyType: HASH
+                  ProvisionedThroughput:
+                     ReadCapacityUnits: 1
+                     WriteCapacityUnits: 1
+            ProvisionedThroughput:
+               ReadCapacityUnits: 1
+               WriteCapacityUnits: 1
+      AccountsTable:
+         Type: AWS::DynamoDB::Table
+         Properties:
+            TableName: ${self:service}-${self:custom.stage}-Accounts
+            AttributeDefinitions:
+               -
+                  AttributeName: id
+                  AttributeType: S
+            KeySchema:
+               -
+                  AttributeName: id
+                  KeyType: HASH
+            ProvisionedThroughput:
+               ReadCapacityUnits: 1
+               WriteCapacityUnits: 1
