@@ -137,7 +137,7 @@ module.exports = function(grunt) {
             tasks: [ 'browserify:js-thirdparty', 'uglify:js-thirdparty' ]
          },
          'js-ours': {
-            files: [ 'src/js/**/*.js', '!src/js/thirdparty.js' ],
+            files: [ 'src/js/**/*.js', '!src/js/thirdparty.js', '../client-config.js' ],
             tasks: [ 'browserify:js-ours', 'uglify:js-ours' ]
          },
          'grunt': {
