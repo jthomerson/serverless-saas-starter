@@ -10,33 +10,24 @@
          this._super('google');
       },
 
-      run: function() {
-         gapi.load('auth2', function() {
-            var auth2;
+      getAuthLink: function(state) {
+         var params;
 
-            auth2 = gapi.auth2.init({
-               client_id: config.auth.google.clientID,
-               cookiepolicy: 'single_host_origin',
-            });
+         params = {
+            client_id: config.auth.google.clientID,
+            response_type: 'code',
+            scope: 'openid email',
+            redirect_uri: this.getRedirectURL(),
+            state: state,
+         };
 
-            this.findButtons().each(function(i, el) {
-               auth2.attachClickHandler(el, {}, this._googleSuccess.bind(this), this._googleError.bind(this));
-            }.bind(this));
-         }.bind(this));
-      },
-
-      _googleSuccess: function(gUser) {
-         this.handleSuccess(null, gUser.getAuthResponse().id_token);
-      },
-
-      _googleError: function(err) {
-         // TODO: really handle errors
-         console.log('error', err);
+         return 'https://accounts.google.com/o/oauth2/v2/auth?' + $.param(params);
       },
 
    });
 
    google = new Google();
+
    google.run();
 
 }());

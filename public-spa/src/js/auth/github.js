@@ -15,7 +15,6 @@
 
          params = {
             client_id: config.auth.github.clientID,
-            // TODO: get this from config:
             redirect_uri: this.getRedirectURL(),
             scope: 'user:email',
             state: state,

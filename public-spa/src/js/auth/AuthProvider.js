@@ -45,10 +45,10 @@
       },
 
       handleSuccess: function(state, accessToken) {
-         var params = { provider: this._provider, accessToken: accessToken, state: state },
+         var params = { provider: this._provider, accessToken: accessToken, state: state, redirectURL: this.getRedirectURL() },
              url = config.auth.apiEndpoint + '/social-auth';
 
-         console.log('login successful [%s], state: %s, access code:', this._provider, state, accessToken);
+         console.log('login successful [%s], state: %s, redirect: %s, access code:', this._provider, state, params.redirectURL, accessToken);
          console.log('will post to', url, params);
 
          $.ajax({ method: 'POST', url: url, data: JSON.stringify(params) })

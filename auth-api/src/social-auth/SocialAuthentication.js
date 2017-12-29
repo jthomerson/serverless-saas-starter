@@ -47,7 +47,7 @@ Handler = {
          });
       }
 
-      provider.authorizeLogin(body.accessToken, body.state)
+      provider.authorizeLogin(body.accessToken, body.state, body.redirectURL)
          .then(function(loginInfo) {
             if (!loginInfo) {
                return null;
